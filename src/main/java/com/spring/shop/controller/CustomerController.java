@@ -67,7 +67,7 @@ public class CustomerController {
 	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred.");
 	        }
         } else {
-            return ResponseEntity.ok("Cutomer with ID "+id+" is not found");
+            return ResponseEntity.ok("Customer with ID "+id+" is not found");
         }
     }
     
@@ -76,9 +76,17 @@ public class CustomerController {
     	 Optional<Customer> presentCustomer = customerRepository.findById(id);
          if (presentCustomer.isPresent()) {
         	 Customer customer = presentCustomer.get();
-        	 customer.setCustomerName(updatedCustomerData.getCustomerName());
-        	 customer.setContact(updatedCustomerData.getContact());
-        	 customer.setAddrses(updatedCustomerData.getAddrses());
+        	 
+        	 if(updatedCustomerData.getCustomerName()!=null)
+        		 customer.setCustomerName(updatedCustomerData.getCustomerName());
+        	 if(updatedCustomerData.getContact()!=null)
+        		 customer.setContact(updatedCustomerData.getContact());
+        	 if(updatedCustomerData.getAddrses()!=null)
+        		 customer.setAddrses(updatedCustomerData.getAddrses());
+        	 
+//        	 customer.setCustomerName(updatedCustomerData.getCustomerName());
+//        	 customer.setContact(updatedCustomerData.getContact());
+//        	 customer.setAddrses(updatedCustomerData.getAddrses());
         	 customer = customerRepository.save(customer);
         	 return ResponseEntity.ok(customer);
          } else {
@@ -89,26 +97,30 @@ public class CustomerController {
 
     
     
-//    @GetMapping("/showProducts")
-//    public List<Product> getAllProducts() {
-//        return productRepository.findAll();
-//    }
-    
-//    @GetMapping("/{id}/books")
-//    public List<Book> getAllBooksByLibraryId(@PathVariable Long id) {
-//    Optional<Libraray1> findById = repository.findById(id);
-//    if (findById.isPresent()) {
-//    Libraray1 library = findById.get();
-//    return library.getBook();
-//    } else
-//    return null;
-//    }
-    @GetMapping("/{id}/getProduct")
-    public List<Product> getProductsByUser(@PathVariable Long id) {
-        Optional<Customer> products =customerRepository.findById(id);
-        if(products.isPresent()) {
-        	Customer customer=products.get();
+    @GetMapping("/{cId}/getProduct")
+    public List<Product> getProductsByUser(@PathVariable Long cId) {
+        Optional<Customer> customerId =customerRepository.findById(cId);
+        if(customerId.isPresent()) {
+        	Customer customer=customerId.get();
         	return customer.getProducts();
+        }else {
+        	return null;
+        }
+        
+    }
+    
+    
+    @GetMapping("/{cId}/getProduct/{pId}")
+    public Product getProductsByUserByProductId(@PathVariable("cId")Long cId,@PathVariable("pId") Long pId) {
+        Optional<Customer> customerId =customerRepository.findById(cId);
+        if(customerId.isPresent()) {
+        	Optional<Product> productId=productRepository.findById(pId);
+        	if(productId.isPresent()) {
+        		Product product=productId.get();
+        		return product;
+        	}
+        	return null;
+        	
         }else {
         	return null;
         }
@@ -135,6 +147,43 @@ public class CustomerController {
             return ResponseEntity.notFound().build();
         }
     }
+    
+    @DeleteMapping("/deleteProduct/{id}")
+    public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
+    	Optional<Product> product = productRepository.findById(id);
+        if (product.isPresent()) {
+        	try {
+	        	productRepository.deleteById(id);
+	            return ResponseEntity.ok("Product with ID " + id + " deleted successfully.");
+	        } catch (Exception e) {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred.");
+	        }
+        } else {
+            return ResponseEntity.ok("Product with ID "+id+" is not found");
+        }
+    }
+    
+    @PutMapping("/{cId}/updateProduct/{pId}")
+    public ResponseEntity<Product> updateProductById(@PathVariable ("cId")Long cId,@PathVariable ("pId")Long pId,@RequestBody Product updatedProductData) {
+    	 Optional<Product> presentProduct = productRepository.findById(pId);
+    	 Optional<Customer> presentCustomer = customerRepository.findById(cId);
+         if (presentProduct.isPresent() && presentCustomer.isPresent()){
+        	 Product product = presentProduct.get();
+        	 if(updatedProductData.getProducPrice()!=null)
+        		 product.setProducPrice(updatedProductData.getProducPrice());
+        	 if(updatedProductData.getProductNAme()!=null)
+        		 product.setProductNAme(updatedProductData.getProductNAme());
+        	 if(updatedProductData.getProductDesc()!=null)
+        		 product.setProductDesc(updatedProductData.getProductDesc());
+        	 if(updatedProductData.getRating()!=0)
+        		 product.setRating(updatedProductData.getRating());
+        	 product = productRepository.save(product);
+        	 return ResponseEntity.ok(product);
+         } else {
+             return ResponseEntity.notFound().build();
+         }
+    }
+    
 }
 
 
