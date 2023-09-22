@@ -35,12 +35,12 @@ public class CustomerController {
     @Autowired
     private ProductRepository productRepository;
 
-    @GetMapping("/find")
+    @GetMapping("/")
     public List<Customer> getAllCustomers() {
         return customerRepository.findAll();
     }
 
-    @GetMapping("/findById/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Customer> getCustomerById(@PathVariable Long id) {
         Optional<Customer> customer = customerRepository.findById(id);
         if (customer.isPresent()) {
@@ -51,12 +51,12 @@ public class CustomerController {
         }
     }
     
-    @PostMapping("/addCustomer")
+    @PostMapping("/")
     public Customer createCustomer(@RequestBody Customer customer) {
         return customerRepository.save(customer);
     }
 
-    @DeleteMapping("/deleteById/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCustomerById(@PathVariable Long id) {
     	Optional<Customer> customer = customerRepository.findById(id);
         if (customer.isPresent()) {
@@ -71,8 +71,24 @@ public class CustomerController {
         }
     }
     
-    @PutMapping("/updateCustomer/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Customer> updateCustomerById(@PathVariable Long id,@RequestBody Customer updatedCustomerData) {
+    	 Optional<Customer> presentCustomer = customerRepository.findById(id);
+         if (presentCustomer.isPresent()) {
+        	 Customer customer = presentCustomer.get();
+        	 
+        	 customer.setCustomerName(updatedCustomerData.getCustomerName());
+        	 customer.setContact(updatedCustomerData.getContact());
+        	 customer.setAddrses(updatedCustomerData.getAddrses());
+        	 customer = customerRepository.save(customer);
+        	 return ResponseEntity.ok(customer);
+         } else {
+             return ResponseEntity.notFound().build();
+         }
+    }
+    
+    @PatchMapping("/{id}")
+    public ResponseEntity<Customer> partialUpdateCustomer(@PathVariable Long id,@RequestBody Customer updatedCustomerData) {
     	 Optional<Customer> presentCustomer = customerRepository.findById(id);
          if (presentCustomer.isPresent()) {
         	 Customer customer = presentCustomer.get();
@@ -84,9 +100,6 @@ public class CustomerController {
         	 if(updatedCustomerData.getAddrses()!=null)
         		 customer.setAddrses(updatedCustomerData.getAddrses());
         	 
-//        	 customer.setCustomerName(updatedCustomerData.getCustomerName());
-//        	 customer.setContact(updatedCustomerData.getContact());
-//        	 customer.setAddrses(updatedCustomerData.getAddrses());
         	 customer = customerRepository.save(customer);
         	 return ResponseEntity.ok(customer);
          } else {
@@ -97,7 +110,7 @@ public class CustomerController {
 
     
     
-    @GetMapping("/{cId}/getProduct")
+    @GetMapping("/{cId}/products")
     public List<Product> getProductsByUser(@PathVariable Long cId) {
         Optional<Customer> customerId =customerRepository.findById(cId);
         if(customerId.isPresent()) {
@@ -110,7 +123,7 @@ public class CustomerController {
     }
     
     
-    @GetMapping("/{cId}/getProduct/{pId}")
+    @GetMapping("/{cId}/products/{pId}")
     public Product getProductsByUserByProductId(@PathVariable("cId")Long cId,@PathVariable("pId") Long pId) {
         Optional<Customer> customerId =customerRepository.findById(cId);
         if(customerId.isPresent()) {
@@ -128,7 +141,7 @@ public class CustomerController {
     }
     
 
-    @PostMapping("/{id}/addProduct")
+    @PostMapping("/{id}/products")
     public ResponseEntity<Product> createProduct(@PathVariable Long id, @RequestBody Product product) {
     	
         Optional<Customer> customerOptional = customerRepository.findById(id);
@@ -148,7 +161,7 @@ public class CustomerController {
         }
     }
     
-    @DeleteMapping("/deleteProduct/{id}")
+    @DeleteMapping("/products/{id}")
     public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
     	Optional<Product> product = productRepository.findById(id);
         if (product.isPresent()) {
@@ -163,8 +176,25 @@ public class CustomerController {
         }
     }
     
-    @PutMapping("/{cId}/updateProduct/{pId}")
+    @PutMapping("/{cId}/products/{pId}")
     public ResponseEntity<Product> updateProductById(@PathVariable ("cId")Long cId,@PathVariable ("pId")Long pId,@RequestBody Product updatedProductData) {
+    	 Optional<Product> presentProduct = productRepository.findById(pId);
+    	 Optional<Customer> presentCustomer = customerRepository.findById(cId);
+         if (presentProduct.isPresent() && presentCustomer.isPresent()){
+        	 Product product = presentProduct.get();
+        	 product.setProducPrice(updatedProductData.getProducPrice());
+        	 product.setProductNAme(updatedProductData.getProductNAme());
+        	 product.setProductDesc(updatedProductData.getProductDesc());
+        	 product.setRating(updatedProductData.getRating());
+        	 product = productRepository.save(product);
+        	 return ResponseEntity.ok(product);
+         } else {
+             return ResponseEntity.notFound().build();
+         }
+    }
+    
+    @PatchMapping("/{cId}/products/{pId}")
+    public ResponseEntity<Product> partialUpdate(@PathVariable ("cId")Long cId,@PathVariable ("pId")Long pId,@RequestBody Product updatedProductData) {
     	 Optional<Product> presentProduct = productRepository.findById(pId);
     	 Optional<Customer> presentCustomer = customerRepository.findById(cId);
          if (presentProduct.isPresent() && presentCustomer.isPresent()){
