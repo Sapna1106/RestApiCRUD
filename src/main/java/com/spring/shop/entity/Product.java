@@ -1,4 +1,4 @@
-package com.spring.shop.service;
+package com.spring.shop.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -13,29 +13,29 @@ import jakarta.persistence.ManyToOne;
 public class Product {
 	
 	@Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "your_id_column", nullable = false)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "productId", nullable = false)
     private long id;
 	
-	private String productNAme;
+	private String productName;
 	private String productDesc;
-	private String producPrice;
+	private String productPrice;
 	private int rating;
 	
 	@ManyToOne
 	@JsonIgnore
 	private Customer customer;
 
-	public String getProductNAme() {
-		return productNAme;
+	public String getProductName() {
+		return productName;
 	}
 
 	public String getProductDesc() {
 		return productDesc;
 	}
 
-	public String getProducPrice() {
-		return producPrice;
+	public String getProductPrice() {
+		return productPrice;
 	}
 
 	public int getRating() {
@@ -46,16 +46,16 @@ public class Product {
 		return customer;
 	}
 
-	public void setProductNAme(String productNAme) {
-		this.productNAme = productNAme;
+	public void setProductName(String productName) {
+		this.productName = productName;
 	}
 
 	public void setProductDesc(String productDesc) {
 		this.productDesc = productDesc;
 	}
 
-	public void setProducPrice(String producPrice) {
-		this.producPrice = producPrice;
+	public void setProductPrice(String productPrice) {
+		this.productPrice = productPrice;
 	}
 
 	public void setRating(int rating) {
@@ -66,11 +66,11 @@ public class Product {
 		this.customer = customer;
 	}
 
-	public Product(String productNAme, String productDesc, String producPrice, int rating, Customer customer) {
+	public Product(String productName, String productDesc, String productPrice, int rating, Customer customer) {
 		super();
-		this.productNAme = productNAme;
+		this.productName = productName;
 		this.productDesc = productDesc;
-		this.producPrice = producPrice;
+		this.productPrice = productPrice;
 		this.rating = rating;
 		this.customer = customer;
 	}
@@ -82,8 +82,8 @@ public class Product {
 
 	@Override
 	public String toString() {
-		return "Product [id=" + id + ", productNAme=" + productNAme + ", productDesc=" + productDesc + ", producPrice="
-				+ producPrice + ", rating=" + rating + ", customer=" + customer + "]";
+		return "Product [id=" + id + ", productName=" + productName + ", productDesc=" + productDesc + ", productPrice="
+				+ productPrice + ", rating=" + rating + ", customer=" + customer + "]";
 	}
 	
 	

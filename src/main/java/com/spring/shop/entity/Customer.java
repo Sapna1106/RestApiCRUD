@@ -1,9 +1,11 @@
-package com.spring.shop.service;
+package com.spring.shop.entity;
 
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -13,15 +15,14 @@ import jakarta.persistence.OneToMany;
 public class Customer {
 	
 	@Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "your_id_column", nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)@Column(name = "customerId", nullable = false)
     private long id;
 	
 	private String CustomerName;
 	private Long contact;
-	private String Addrses;
+	private String address;
 	
-	@OneToMany(mappedBy="customer")
+	@OneToMany(mappedBy="customer", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
 	private List<Product> products;
 
 	public String getCustomerName() {
@@ -32,8 +33,8 @@ public class Customer {
 		return contact;
 	}
 
-	public String getAddrses() {
-		return Addrses;
+	public String getAddress() {
+		return address;
 	}
 
 	public List<Product> getProducts() {
@@ -48,19 +49,19 @@ public class Customer {
 		this.contact = contact;
 	}
 
-	public void setAddrses(String addrses) {
-		Addrses = addrses;
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
 	public void setProducts(List<Product> products) {
 		this.products = products;
 	}
 
-	public Customer(String customerName, Long contact, String addrses, List<Product> products) {
+	public Customer(String customerName, Long contact, String address, List<Product> products) {
 		super();
 		CustomerName = customerName;
 		this.contact = contact;
-		Addrses = addrses;
+		this.address = address;
 		this.products = products;
 	}
 

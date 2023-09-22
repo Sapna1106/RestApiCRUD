@@ -17,19 +17,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.spring.shop.entity.Customer;
+import com.spring.shop.entity.Product;
 import com.spring.shop.repository.CustomerRepository;
 import com.spring.shop.repository.ProductRepository;
-import com.spring.shop.service.Customer;
-import com.spring.shop.service.Product;
 
 @RestController
 @RequestMapping("/customers")
 public class CustomerController {
-//	@GetMapping("/hello")
-//	public String getAllCustomers() {
-//      return "Hello!";
-//  }
-
+	
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired
@@ -60,8 +56,11 @@ public class CustomerController {
     public ResponseEntity<String> deleteCustomerById(@PathVariable Long id) {
     	Optional<Customer> customer = customerRepository.findById(id);
         if (customer.isPresent()) {
+        	
         	try {
-	        	customerRepository.deleteById(id);
+        		
+        		customerRepository.deleteById(id);
+//	        	System.out.println(id);
 	            return ResponseEntity.ok("Customer with ID " + id + " deleted successfully.");
 	        } catch (Exception e) {
 	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred.");
@@ -79,7 +78,7 @@ public class CustomerController {
         	 
         	 customer.setCustomerName(updatedCustomerData.getCustomerName());
         	 customer.setContact(updatedCustomerData.getContact());
-        	 customer.setAddrses(updatedCustomerData.getAddrses());
+        	 customer.setAddress(updatedCustomerData.getAddress());
         	 customer = customerRepository.save(customer);
         	 return ResponseEntity.ok(customer);
          } else {
@@ -97,8 +96,8 @@ public class CustomerController {
         		 customer.setCustomerName(updatedCustomerData.getCustomerName());
         	 if(updatedCustomerData.getContact()!=null)
         		 customer.setContact(updatedCustomerData.getContact());
-        	 if(updatedCustomerData.getAddrses()!=null)
-        		 customer.setAddrses(updatedCustomerData.getAddrses());
+        	 if(updatedCustomerData.getAddress()!=null)
+        		 customer.setAddress(updatedCustomerData.getAddress());
         	 
         	 customer = customerRepository.save(customer);
         	 return ResponseEntity.ok(customer);
@@ -106,8 +105,6 @@ public class CustomerController {
              return ResponseEntity.notFound().build();
          }
     }
-    
-
     
     
     @GetMapping("/{cId}/products")
@@ -147,16 +144,14 @@ public class CustomerController {
         Optional<Customer> customerOptional = customerRepository.findById(id);
 
         if (customerOptional.isPresent()) {
-        	System.out.println(product);
+//        	System.out.println(product);
             Customer customer = customerOptional.get();
             product.setCustomer(customer);
             customer.getProducts().add(product);
             customerRepository.save(customer);
-           
-            Product savedProduct = productRepository.save(product);
-            return ResponseEntity.ok(savedProduct);
+//            Product savedProduct = productRepository.save(product);
+            return ResponseEntity.ok(product);
         } else {
-            // Handle the case where the customer with the given ID is not found
             return ResponseEntity.notFound().build();
         }
     }
@@ -182,8 +177,8 @@ public class CustomerController {
     	 Optional<Customer> presentCustomer = customerRepository.findById(cId);
          if (presentProduct.isPresent() && presentCustomer.isPresent()){
         	 Product product = presentProduct.get();
-        	 product.setProducPrice(updatedProductData.getProducPrice());
-        	 product.setProductNAme(updatedProductData.getProductNAme());
+        	 product.setProductPrice(updatedProductData.getProductPrice());
+        	 product.setProductName(updatedProductData.getProductName());
         	 product.setProductDesc(updatedProductData.getProductDesc());
         	 product.setRating(updatedProductData.getRating());
         	 product = productRepository.save(product);
@@ -199,10 +194,10 @@ public class CustomerController {
     	 Optional<Customer> presentCustomer = customerRepository.findById(cId);
          if (presentProduct.isPresent() && presentCustomer.isPresent()){
         	 Product product = presentProduct.get();
-        	 if(updatedProductData.getProducPrice()!=null)
-        		 product.setProducPrice(updatedProductData.getProducPrice());
-        	 if(updatedProductData.getProductNAme()!=null)
-        		 product.setProductNAme(updatedProductData.getProductNAme());
+        	 if(updatedProductData.getProductPrice()!=null)
+        		 product.setProductPrice(updatedProductData.getProductPrice());
+        	 if(updatedProductData.getProductName()!=null)
+        		 product.setProductName(updatedProductData.getProductName());
         	 if(updatedProductData.getProductDesc()!=null)
         		 product.setProductDesc(updatedProductData.getProductDesc());
         	 if(updatedProductData.getRating()!=0)
@@ -213,8 +208,4 @@ public class CustomerController {
              return ResponseEntity.notFound().build();
          }
     }
-    
 }
-
-
-
